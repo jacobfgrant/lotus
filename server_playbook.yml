@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  remote_user: root
+  
+  tasks:
+    - user:
+        name:
+        comment: ""
+        group:
+        shell: /bin/bash
+        system:
+            
+    - user:
+        name:
+        comment: ""
+        group:
+        shell: /bin/bash
+        system:
+
+    - file:
+        path: /etc/ansible/hosts
+        state: file
+        owner: root
+        group: root
+        mode: 0644
+
+    - file:
+        path: "/etc/ansible/{{item}}"
+        state: file
+        owner: root
+        group: root
+        mode: 0644
+        recurse: yes
+      with_items:
+        - hosts
+        - client_resources
+        - icons
+        - manifests
+        - pkgs
+        - pkgsinfo

@@ -1,0 +1,31 @@
+#cloud-config
+package_update: true
+
+package_upgrade: true
+
+packages:
+  - curl
+  - git
+  - python
+  - aptitude
+
+runcmd:
+  - curl -o /root/client_cloud-config.yml https://raw.githubusercontent.com/jacobfgrant/lotus/master/client_cloud-config.yml
+  
+  # Consider using git clone for full repository
+  - curl -o /root/bootstrap.sh https://raw.githubusercontent.com/jacobfgrant/lotus/master/bootstrap.sh
+
+write_files:
+  - path: /etc/cron.d/cron_bootstrap
+    owner: root:root
+    # Make sure this is the correct location for bootstrap.sh
+    content: '@reboot root /root/bootstrap.sh'
+    
+  - path: /root/bootstrap_variables
+    owner: root:root
+    # Content will be dynamically generated using script on client side
+    content: ''
+
+power_state:
+  timeout: 90
+  mode: reboot

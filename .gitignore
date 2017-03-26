@@ -1,0 +1,4 @@
+#.gitignore File for /jacobfgrant/lotus
+
+#.DS_Store files
+.DS_Store

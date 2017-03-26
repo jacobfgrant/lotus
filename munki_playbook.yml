@@ -1,0 +1,69 @@
+---
+- hosts: munki
+  remote_user: root
+  vars:
+    # Should by dynamically generated
+    munki_nginx_fqdn: 8.8.8.8
+  
+  tasks:
+    - group:
+        name: munki
+        system: yes
+    
+    - user:
+        name: munki
+        comment: "Munki User"
+        group: munki
+        shell: /bin/bash
+        system: yes
+    
+    - user:
+        name: www-data
+        group: munki
+
+    - file:
+        path: "/usr/local/munki_repo/{{item}}"
+        state: directory
+        owner: root
+        group: munki
+        mode: 02744
+        recurse: yes
+      with_items:
+        -
+        - catalogs
+        - client_resources
+        - icons
+        - manifests
+        - pkgs
+        - pkgsinfo
+    
+    - apt:
+        update_cache: yes
+        upgrade: yes
+    
+    - apt:
+        name: "{{item}}"
+        state: latest
+      with_items:
+        - python
+        - git
+        - curl
+        - build-essential
+        - nginx
+        - apache2-utils
+    
+    # FIX THIS
+    - template:
+        src: munki_sites-available_default
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+    
+    -
+    
+    
+    
+    
+    

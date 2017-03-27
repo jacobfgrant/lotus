@@ -12,11 +12,19 @@
 # Updated:
 #
 
-# Read in bootstrap_variables
-echo "Reading in bootstrap_variables..."
-DO_TOKEN=0e1165c4a196cfb1d2a6456947c33a587e29c5efb84e0f7cb0cb81b1148021f6
-DO_DOMAIN=lotuscloud.com
-DO_REGION=sfo2
+# Read in and evaluate bootstrap_variables
+echo "Reading in bootstrap_variables..." && echo
+BOOTSTRAP_FILE="/root/bootstrap_variables"
+while IFS= read -r BOOTSTRAP_LINE
+do
+    eval $BOOTSTRAP_LINE
+done <"$BOOTSTRAP_FILE"
+echo
+
+#echo "Reading in bootstrap_variables..."
+#DO_TOKEN=
+#DO_DOMAIN=lotuscloud.com
+#DO_REGION=sfo2
 
 
 # Install add Ansible repository and install
@@ -31,8 +39,9 @@ DO_REGION=sfo2
 
 
 # Create munkireport server (droplet)
-echo "Building MunkiReport server API call..."
+echo "Building MunkiReport server API call..." && echo
 
+# Create each variable for DigitalOcean API call
 DO_API_NAME='"name":"munkireport.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
 DO_API_SIZE='"size":"512mb"' && echo $DO_API_SIZE
@@ -46,13 +55,19 @@ DO_API_MONITORING='"monitoring":true' && echo $DO_API_MONITORING
 DO_API_VOLUMES='"volumes":null' && echo $DO_API_VOLUMES
 DO_API_TAGS='"tags":["lotus","reporting","munkireport"]' && echo $DO_API_TAGS
 
-echo "Creating MunkiReport server..."
-curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets"
+# Run API call with set variables
+# Adds output to api_calls.log
+echo
+echo "Creating MunkiReport server..." && echo
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets" | tee /root/api_calls.log
+echo
+echo
 
 
 # Create primary munki server (droplet)
-echo "Building Munki server API call..."
+echo "Building Munki server API call..." && echo
 
+# Create each variable for DigitalOcean API call
 DO_API_NAME='"name":"00-munki.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
 DO_API_SIZE='"size":"512mb"' && echo $DO_API_SIZE
@@ -66,6 +81,11 @@ DO_API_MONITORING='"monitoring":true' && echo $DO_API_MONITORING
 DO_API_VOLUMES='"volumes":null' && echo $DO_API_VOLUMES
 DO_API_TAGS='"tags":["lotus","munki"]' && echo $DO_API_TAGS
 
+# Run API call with set variables
+# Adds output to api_calls.log
+echo
+echo "Creating Munki server..." && echo
 
-echo "Creating Munki server..."
-curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets"
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets" | tee /root/api_calls.log
+echo
+echo

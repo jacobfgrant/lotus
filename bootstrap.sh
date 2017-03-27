@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# Bootstraps the Lotus Command Server.
+#
+# Takes in variables from bootstrap_variables
+# Run as root
+#
+# Built for DigitalOcean
+#
+# Written by: Jacob F. Grant
+# Written: 03/26/2017
+# Updated:
+#
+
+# Read in bootstrap_variables
+echo "Reading in bootstrap_variables..."
+DO_TOKEN=0e1165c4a196cfb1d2a6456947c33a587e29c5efb84e0f7cb0cb81b1148021f6
+DO_DOMAIN=lotuscloud.com
+DO_REGION=sfo2
+
+
+# Install add Ansible repository and install
+#apt-get install -y software-properties-common
+#apt-add-repository -y ppa:ansible/ansible #&> /dev/null && echo OKAY || exit 1
+#apt-get update
+#apt-get install -y ansible
+
+
+# Clone Lotus repo from GitHub
+#git clone https://github.com/jacobfgrant/lotus.git --recursive
+
+
+# Create munkireport server (droplet)
+echo "Building MunkiReport server API call..."
+
+DO_API_NAME='"name":"munkireport.'$DO_DOMAIN'"' && echo $DO_API_NAME
+DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
+DO_API_SIZE='"size":"512mb"' && echo $DO_API_SIZE
+DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
+DO_API_SSHKEYS='"ssh_keys":null' && echo $DO_API_SSHKEYS
+DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
+DO_API_IPV6='"ipv6":true' && echo $DO_API_IPV6
+DO_API_PRIVATENETWORKING='"private_networking":true' && echo $DO_API_PRIVATENETWORKING
+DO_API_USERDATA='"user_data":"/root/lotus/client_cloud-config.yml"' && echo $DO_API_USERDATA
+DO_API_MONITORING='"monitoring":true' && echo $DO_API_MONITORING
+DO_API_VOLUMES='"volumes":null' && echo $DO_API_VOLUMES
+DO_API_TAGS='"tags":["lotus","reporting","munkireport"]' && echo $DO_API_TAGS
+
+echo "Creating MunkiReport server..."
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets"
+
+
+# Create primary munki server (droplet)
+echo "Building Munki server API call..."
+
+DO_API_NAME='"name":"00-munki.'$DO_DOMAIN'"' && echo $DO_API_NAME
+DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
+DO_API_SIZE='"size":"512mb"' && echo $DO_API_SIZE
+DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
+DO_API_SSHKEYS='"ssh_keys":null' && echo $DO_API_SSHKEYS
+DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
+DO_API_IPV6='"ipv6":true' && echo $DO_API_IPV6
+DO_API_PRIVATENETWORKING='"private_networking":true' && echo $DO_API_PRIVATENETWORKING
+DO_API_USERDATA='"user_data":"/root/lotus/client_cloud-config.yml"' && echo $DO_API_USERDATA
+DO_API_MONITORING='"monitoring":true' && echo $DO_API_MONITORING
+DO_API_VOLUMES='"volumes":null' && echo $DO_API_VOLUMES
+DO_API_TAGS='"tags":["lotus","munki"]' && echo $DO_API_TAGS
+
+
+echo "Creating Munki server..."
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets"

@@ -15,13 +15,17 @@
 # Read in and evaluate bootstrap_variables
 echo "Reading in bootstrap_variables..." && echo
 # Set to bootstrap_variables location
-BOOTSTRAP_FILE="/root/bootstrap_variables"
-while IFS= read -r BOOTSTRAP_LINE
-do
-    eval $BOOTSTRAP_LINE
-done <"$BOOTSTRAP_FILE"
-echo
+#BOOTSTRAP_FILE="/root/bootstrap_variables"
+#while IFS= read -r BOOTSTRAP_LINE
+#do
+#    eval $BOOTSTRAP_LINE
+#done <"$BOOTSTRAP_FILE"
+#echo
 
+# Use source and a config file
+#source /root/bootstrap.cfg
+source /root/bootstrap_variables
+echo
 
 # Install add Ansible repository and install
 apt-get install -yqq software-properties-common
@@ -86,3 +90,7 @@ echo "Creating Munki server..." && echo
 
 curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d "{$DO_API_NAME,$DO_API_REGION,$DO_API_SIZE,$DO_API_IMAGE,$DO_API_SSHKEYS,$DO_API_BACKUPS,$DO_API_IPV6,$DO_API_PRIVATENETWORKING,$DO_API_USERDATA,$DO_API_MONITORING,$DO_API_VOLUMES,$DO_API_TAGS}" "https://api.digitalocean.com/v2/droplets" | tee -a /root/api_calls.log
 echo
+
+
+echo "Deleting bootstrap_variables..."
+rm -f /root/bootstrap_variables

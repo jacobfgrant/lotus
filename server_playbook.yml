@@ -38,3 +38,9 @@
         - manifests
         - pkgs
         - pkgsinfo
+    
+    - git:
+        repo: 'https://github.com/jacobfgrant/lotus.git'
+        dest: /root/lotus/
+        clone: yes
+        update: yes

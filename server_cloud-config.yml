@@ -10,22 +10,24 @@ packages:
   - aptitude
 
 runcmd:
-  - curl -o /root/client_cloud-config.yml https://raw.githubusercontent.com/jacobfgrant/lotus/master/client_cloud-config.yml
-  
-  # Consider using git clone for full repository
-  - curl -o /root/bootstrap.sh https://raw.githubusercontent.com/jacobfgrant/lotus/master/bootstrap.sh
+  - git clone --recursive "https://github.com/jacobfgrant/lotus.git" /root/lotus
 
 write_files:
   - path: /etc/cron.d/cron_bootstrap
     owner: root:root
+    permissions: 755
     # Make sure this is the correct location for bootstrap.sh
-    content: '@reboot root /root/bootstrap.sh'
+    content: '@reboot root /root/lotus/bootstrap/bootstrap.sh >> /root/bootstrap.log'
     
   - path: /root/bootstrap_variables
     owner: root:root
+    permissions: 400
     # Content will be dynamically generated using script on client side
-    content: ''
+    content:  |
+      DO_TOKEN=""
+      DO_REGION=""
+      DO_DOMAIN=""
 
 power_state:
-  timeout: 90
+  timeout: 30
   mode: reboot

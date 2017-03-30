@@ -6,22 +6,26 @@
     munki_nginx_fqdn: 8.8.8.8
   
   tasks:
-    - group:
+    - name: create munki group
+      group:
         name: munki
         system: yes
     
-    - user:
+    - name: create munki user
+      user:
         name: munki
         comment: "Munki User"
         group: munki
         shell: /bin/bash
         system: yes
     
-    - user:
+    - name: add www-data (web user) to munki group
+      user:
         name: www-data
         group: munki
 
-    - file:
+    - name: create munki repo
+      file:
         path: "/usr/local/munki_repo/{{item}}"
         state: directory
         owner: root
@@ -37,11 +41,13 @@
         - pkgs
         - pkgsinfo
     
-    - apt:
+    - name: update/upgrade packages
+      apt:
         update_cache: yes
         upgrade: yes
     
-    - apt:
+    - name: install requred packages
+      apt:
         name: "{{item}}"
         state: latest
       with_items:
@@ -53,7 +59,8 @@
         - apache2-utils
     
     # FIX THIS
-    - template:
+    - name: apply nginx sites-available template
+      template:
         src: munki_sites-available_default
         dest: /etc/nginx/sites-available/default
         owner: root

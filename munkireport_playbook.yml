@@ -5,17 +5,20 @@
     mysql_root_password: abc123
   
   tasks:
-    - user:
+    - name: create munkireport user
+      user:
         name: munkireport
         comment: "MunkiReport User"
         shell: /bin/bash
         system: yes
         
-    - apt:
+    - name: update/upgrade packages
+      apt:
         update_cache: yes
         upgrade: yes
   
-    - apt:
+    - name: install requred packages
+      apt:
         name: "{{item}}"
         state: latest
       with_items:
@@ -30,7 +33,8 @@
         - mysql-server
         - python-mysqldb
     
-    - template:
+    - name: create mysql root credentials
+      template:
         src: mysql_root_credentials
         dest: /root/.my.cnf
         owner: root
@@ -38,51 +42,60 @@
         mode: 0644
         backup: yes
         
-    - mysql_user:
+    - name: create mysql root user
+      mysql_user:
         user: root
         password: "{{ mysql_root_password }}"
         host: localhost
     
-    - mysql_user:
+    - name: remove anonymous mysql users
+      mysql_user:
         name: ''
         state: absent
     
-    - mysql_db:
+    - name: remove mysql test database
+      mysql_db:
         db: test
         state: absent
     
-    - mysql_db:
+    - name: create munkireport mysql database
+      mysql_db:
         db: munkireport
         state: present
         encoding: utf8
         collation: utf8_bin
     
-    - mysql_user:
+    - name: create munkireport mysql user
+      mysql_user:
         name: munkireport_user
         password: 12345
         encrypted: no
         priv: 'munkireport.*:ALL,GRANT'
         state: present
     
-    - lineinfile:
+    - name: modify php settings
+      lineinfile:
         path: /etc/php/7.0/fpm/php.ini
         regexp: '.*cgi.fix_pathinfo='
         line: 'cgi.fix_pathinfo=0'
     
-    - git:
+    - name: clone munkireport github repo
+      git:
         repo: 'https://github.com/munkireport/munkireport-php'
         dest: /usr/share/nginx/html/report
         clone: yes
         update: yes
     
-    - template:
+    - name: crete munkireport config.php file
+      template:
         src: munkireport_config.php
         dest: /usr/share/nginx/html/report/config.php
         owner: root
         group: root
         mode: 0644
     
-    - template:
+    - name: apply nginx sites-available template
+      template:
         src: munkireport_sites-available_default
         dest: /etc/nginx/sites-available/default
         owner: root
@@ -90,7 +103,8 @@
         mode: 0644
         backup: yes
     
-    - lineinfile:
+    - name: modify nginx config file
+      lineinfile:
         path: /etc/nginx/nginx.conf
         regexp: '.*default_type application/octet-stream;'
         line: '#default_type application/octet-stream;'

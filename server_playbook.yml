@@ -5,43 +5,29 @@
   tasks:
     - name:
       user:
-        name:
-        comment: ""
-        group:
+        name: {{ lotus_user_name }}
+        #comment: ""
+        groups: sudo
         shell: /bin/bash
-        system:
-            
-    - name:
-      user:
-        name:
-        comment: ""
-        group:
-        shell: /bin/bash
-        system:
-
-    - name:
-      file:
-        path: /etc/ansible/hosts
-        state: file
-        owner: root
-        group: root
-        mode: 0644
-
-    - name:
-      file:
-        path: "/etc/ansible/{{item}}"
-        state: file
-        owner: root
-        group: root
-        mode: 0644
-        recurse: yes
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: ~/.ssh/id_rsa
+        
+    - name: update/upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: yes
+  
+    - name: install requred packages
+      apt:
+        name: "{{ item }}"
+        state: latest
       with_items:
-        - hosts
-        - client_resources
-        - icons
-        - manifests
-        - pkgs
-        - pkgsinfo
+        - ansible
+        - aptitude
+        - curl
+        - git
+        - python
     
     - name: clone munkireport github repo
       git:
@@ -49,3 +35,11 @@
         dest: /root/lotus/
         clone: yes
         update: yes
+
+    - name: copy dynamic hosts file
+      copy:
+        src: /root/lotus/dynamic_hosts/dynamic_hosts/{{ dynamic_hosts_script }}
+        dest: /etc/ansible/dynamic_hosts.py
+        owner: root
+        group: root
+        mode: 0755

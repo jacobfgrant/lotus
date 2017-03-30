@@ -1,8 +1,6 @@
 ---
 - hosts: munkireport
   remote_user: root
-  vars:
-    mysql_root_password: abc123
   
   tasks:
     - name: create munkireport user
@@ -22,15 +20,16 @@
         name: "{{item}}"
         state: latest
       with_items:
-        - python
-        - git
+        - aptitude
         - curl
+        - git
+        - mysql-client
+        - mysql-server
         - nginx
         - php7.0-fpm
         - php7.0-mysql
         - php7.0-xml
-        - mysql-client
-        - mysql-server
+        - python
         - python-mysqldb
     
     - name: create mysql root credentials
@@ -81,14 +80,14 @@
     
     - name: clone munkireport github repo
       git:
-        repo: 'https://github.com/munkireport/munkireport-php'
+        repo: 'https://github.com/munkireport/munkireport-php.git'
         dest: /usr/share/nginx/html/report
         clone: yes
         update: yes
     
-    - name: crete munkireport config.php file
+    - name: create munkireport config.php file
       template:
-        src: munkireport_config.php
+        src: /root/lotus/templates/munki/munkireport_config.php
         dest: /usr/share/nginx/html/report/config.php
         owner: root
         group: root
@@ -96,7 +95,7 @@
     
     - name: apply nginx sites-available template
       template:
-        src: munkireport_sites-available_default
+        src: /root/lotus/templates/munki/munkireport_sites-available_default
         dest: /etc/nginx/sites-available/default
         owner: root
         group: root

@@ -1,9 +1,6 @@
 ---
 - hosts: munki
   remote_user: root
-  vars:
-    # Should by dynamically generated
-    munki_nginx_fqdn: 8.8.8.8
   
   tasks:
     - name: create munki group
@@ -19,7 +16,7 @@
         shell: /bin/bash
         system: yes
     
-    - name: add www-data (web user) to munki group
+    - name: add web user (www-data) to munki group
       user:
         name: www-data
         group: munki
@@ -51,17 +48,17 @@
         name: "{{item}}"
         state: latest
       with_items:
-        - python
-        - git
-        - curl
-        - build-essential
-        - nginx
         - apache2-utils
+        - aptitude
+        - build-essential
+        - curl
+        - git
+        - nginx
+        - python
     
-    # FIX THIS
     - name: apply nginx sites-available template
       template:
-        src: munki_sites-available_default
+        src: /root/lotus/templates/munki/munki_sites-available_default
         dest: /etc/nginx/sites-available/default
         owner: root
         group: root

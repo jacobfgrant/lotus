@@ -17,16 +17,14 @@ write_files:
     owner: root:root
     permissions: 755
     # Make sure this is the correct location for bootstrap.sh
-    content: '@reboot root /root/lotus/bootstrap/bootstrap.sh >> /root/bootstrap.log'
+    content: "@reboot root /root/lotus/bootstrap/bootstrap.sh >> /root/bootstrap.log"
     
   - path: /root/bootstrap_variables
     owner: root:root
     permissions: 400
     # Content will be dynamically generated using script on client side
     content:  |
-      DO_TOKEN=""
-      DO_REGION=""
-      DO_DOMAIN=""
+      insert_bootstrap_variables
 
 power_state:
   timeout: 30

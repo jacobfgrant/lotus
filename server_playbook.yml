@@ -28,6 +28,13 @@
         - curl
         - git
         - python
+        - python-pip
+    
+    - name: install required pip packages
+      pip:
+        name:
+          - requests
+        state: latest
     
     - name: clone munkireport github repo
       git:

@@ -4,10 +4,11 @@ package_update: true
 package_upgrade: true
 
 packages:
+  - aptitude
   - curl
   - git
   - python
-  - aptitude
+  - python-pip
 
 runcmd:
   - git clone --recursive "https://github.com/jacobfgrant/lotus.git" /root/lotus

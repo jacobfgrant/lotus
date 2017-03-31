@@ -81,13 +81,13 @@
     - name: clone munkireport github repo
       git:
         repo: 'https://github.com/munkireport/munkireport-php.git'
-        dest: /usr/share/nginx/html/report
+        dest: /usr/share/nginx/html/munkireport
         clone: yes
         update: yes
     
     - name: create munkireport config.php file
       template:
-        src: /root/lotus/templates/munki/munkireport_config.php
+        src: /root/lotus/templates/munkireport_config.php
         dest: /usr/share/nginx/html/report/config.php
         owner: root
         group: root
@@ -95,12 +95,23 @@
     
     - name: apply nginx sites-available template
       template:
-        src: /root/lotus/templates/munki/munkireport_sites-available_default
-        dest: /etc/nginx/sites-available/default
+        src: /root/lotus/templates/munkireport_sites-available
+        dest: /etc/nginx/sites-available/munkireport
         owner: root
         group: root
         mode: 0644
         backup: yes
+
+    - name: remove default from nginx sites-enabled
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+    
+    - name: add munkireport to nginx sites-enabled
+      file:
+        src: /etc/nginx/sites-available/munkireport
+        dest: /etc/nginx/sites-enabled/munkireport
+        state: link
     
     - name: modify nginx config file
       lineinfile:

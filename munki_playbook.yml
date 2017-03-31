@@ -64,10 +64,16 @@
         group: root
         mode: 0644
         backup: yes
+      notify:
+        - restart nginx
     
-    -
-    
-    
-    
-    
-    
+    - name: ensure nginx is running
+      service:
+        name: nginx
+        state: started
+        
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

@@ -77,6 +77,9 @@
         path: /etc/php/7.0/fpm/php.ini
         regexp: '.*cgi.fix_pathinfo='
         line: 'cgi.fix_pathinfo=0'
+      notify:
+        - restart nginx
+        - restart php
     
     - name: clone munkireport github repo
       git:
@@ -84,6 +87,9 @@
         dest: /usr/share/nginx/html/report
         clone: yes
         update: yes
+      notify:
+        - restart nginx
+        - restart php
     
     - name: create munkireport config.php file
       template:
@@ -92,6 +98,9 @@
         owner: root
         group: root
         mode: 0644
+      notify:
+        - restart nginx
+        - restart php
     
     - name: apply nginx sites-available template
       template:
@@ -101,22 +110,32 @@
         group: root
         mode: 0644
         backup: yes
+      notify:
+        - restart nginx
     
     - name: modify nginx config file
       lineinfile:
         path: /etc/nginx/nginx.conf
         regexp: '.*default_type application/octet-stream;'
         line: '#default_type application/octet-stream;'
+      notify:
+        - restart nginx
     
+    - name: ensure web services are running
+      service:
+        name: "{{ item }}"
+        state: started
+      with_items:
+        - nginx
+        - php7.0-fpm
+        
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    - name: restart php
+      service:
+        name: php7.0-fpm
+        state: restarted

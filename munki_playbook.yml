@@ -23,7 +23,7 @@
 
     - name: create munki repo
       file:
-        path: "/usr/local/munki_repo/{{item}}"
+        path: "/usr/local/munki_repo/{{ item }}"
         state: directory
         owner: root
         group: munki
@@ -43,9 +43,9 @@
         update_cache: yes
         upgrade: yes
     
-    - name: install requred packages
+    - name: install required packages
       apt:
-        name: "{{item}}"
+        name: "{{ item }}"
         state: latest
       with_items:
         - apache2-utils

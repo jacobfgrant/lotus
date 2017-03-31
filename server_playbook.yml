@@ -1,11 +1,15 @@
 ---
-- hosts: localhost
+- hosts: command
   remote_user: root
+  #vars:
+      #lotus_user_name: johndoe
+      # Used for testing
+      #dynamic_hosts_script = digitalocean_dynamic_hosts.py
   
   tasks:
-    - name:
+    - name: set up user account
       user:
-        name: {{ lotus_user_name }}
+        name: "{{ lotus_user_name }}"
         #comment: ""
         groups: sudo
         shell: /bin/bash
@@ -18,7 +22,7 @@
         update_cache: yes
         upgrade: yes
   
-    - name: install requred packages
+    - name: install required packages
       apt:
         name: "{{ item }}"
         state: latest
@@ -36,7 +40,7 @@
           - requests
         state: latest
     
-    - name: clone munkireport github repo
+    - name: clone lotus github repo
       git:
         repo: 'https://github.com/jacobfgrant/lotus.git'
         dest: /root/lotus/
@@ -45,7 +49,7 @@
 
     - name: copy dynamic hosts file
       copy:
-        src: /root/lotus/dynamic_hosts/dynamic_hosts/{{ dynamic_hosts_script }}
+        src: "/root/lotus/dynamic_hosts/dynamic_hosts_scripts/{{ dynamic_hosts_script }}"
         dest: /etc/ansible/dynamic_hosts.py
         owner: root
         group: root

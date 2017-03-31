@@ -15,9 +15,9 @@
         update_cache: yes
         upgrade: yes
   
-    - name: install requred packages
+    - name: install required packages
       apt:
-        name: "{{item}}"
+        name: "{{ item }}"
         state: latest
       with_items:
         - aptitude

@@ -32,9 +32,37 @@ apt-get install -y ansible &> /dev/null && echo "Success" || exit 1
 echo
 echo
 
-# Clone Lotus repo from GitHub
-#echo "Cloning Lotus repo from GitHub"
-#git clone https://github.com/jacobfgrant/lotus.git --recursive
+
+# Create ssh keys for use with Ansible
+# REPLACE WITH ANSIBLE IN FUTURE RELEASES
+echo "Creating ssh keys"
+
+if [ ! -d /root/.ssh/ ]; then
+  mkdir /root/.ssh/
+fi
+chmod 644 /root/.ssh/
+ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa_root
+echo
+
+echo "Add ssh key to DigitalOcean"
+echo
+
+PUB_KEY=$(cat /root/.ssh/id_rsa_root.pub)
+DO_KEY_NAME='"name":"Lotus Command Server Public Key"'
+DO_KEY_PUB='"public_key":"'$PUB_KEY'"'
+
+DO_KEY_ID=$(curl -X POST -H \
+"Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d \
+"{
+    $DO_KEY_NAME,
+    $DO_KEY_PUB
+}" \
+"https://api.digitalocean.com/v2/account/keys" \
+| tee -a /var/log/lotus/api_calls.log \
+| grep -Po '"id":\K([0-9]*)')
+
+echo -e "\n" | tee -a /var/log/lotus/api_calls.log
+echo
 
 
 # Create munkireport server (droplet)
@@ -46,7 +74,7 @@ DO_API_NAME='"name":"munkireport.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
 DO_API_SIZE='"size":"'$DO_SIZE'"' && echo $DO_API_SIZE
 DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
-DO_API_SSHKEYS='"ssh_keys":null' && echo $DO_API_SSHKEYS
+DO_API_SSHKEYS='"ssh_keys":'["$DO_KEY_ID"]'' && echo $DO_API_SSHKEYS
 DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
 DO_API_IPV6='"ipv6":true' && echo $DO_API_IPV6
 DO_API_PRIVATENETWORKING='"private_networking":true' && echo $DO_API_PRIVATENETWORKING
@@ -79,7 +107,8 @@ curl -X POST -H \
     $DO_API_VOLUMES,
     $DO_API_TAGS
 }" \
-"https://api.digitalocean.com/v2/droplets" | tee -a /var/log/lotus/api_calls.log
+"https://api.digitalocean.com/v2/droplets" \
+| tee -a /var/log/lotus/api_calls.log
 
 echo -e "\n" | tee -a /var/log/lotus/api_calls.log
 echo
@@ -94,7 +123,7 @@ DO_API_NAME='"name":"00-munki.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
 DO_API_SIZE='"size":"'$DO_SIZE'"' && echo $DO_API_SIZE
 DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
-DO_API_SSHKEYS='"ssh_keys":null' && echo $DO_API_SSHKEYS
+DO_API_SSHKEYS='"ssh_keys":'["$DO_KEY_ID"]'' && echo $DO_API_SSHKEYS
 DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
 DO_API_IPV6='"ipv6":true' && echo $DO_API_IPV6
 DO_API_PRIVATENETWORKING='"private_networking":true' && echo $DO_API_PRIVATENETWORKING
@@ -127,7 +156,8 @@ curl -X POST -H \
     $DO_API_VOLUMES,
     $DO_API_TAGS
 }" \
-"https://api.digitalocean.com/v2/droplets" | tee -a /var/log/lotus/api_calls.log
+"https://api.digitalocean.com/v2/droplets" \
+| tee -a /var/log/lotus/api_calls.log
 
 echo -e "\n" | tee -a /var/log/lotus/api_calls.log
 echo

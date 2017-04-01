@@ -34,11 +34,11 @@
     
     - name: create mysql root credentials
       template:
-        src: mysql_root_credentials
+        src: /root/lotus/templates/munkireport_mysql_credentials
         dest: /root/.my.cnf
         owner: root
         group: root
-        mode: 0644
+        mode: 0600
         backup: yes
         
     - name: create mysql root user
@@ -66,9 +66,8 @@
     
     - name: create munkireport mysql user
       mysql_user:
-        name: munkireport_user
-        password: 12345
-        encrypted: no
+        name: mysql_munkireport_user
+        password: "{{ mysql_munkireport_password }}"
         priv: 'munkireport.*:ALL,GRANT'
         state: present
     

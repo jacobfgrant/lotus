@@ -54,3 +54,32 @@
         owner: root
         group: root
         mode: 0755
+    
+    - name: remove bootstrap cron.d job
+      file:
+        path: /etc/cron.d/cron_bootstrap
+        state: absent
+    
+    # Command server cron job -- every 5 minutes
+    - name: set up command playbook cron job
+      cron:
+        name: "Run command playbook"
+        minute: "*/5" # Runs every five minutes
+        state: present
+        job: "ansible-playbook /lotus/server_playbook.yml"
+    
+    # Munki server cron job
+    - name: set up munki playbook cron job
+      cron:
+        name: "Run munki playbook"
+        minute: "30" # Runs every hour
+        state: present
+        job: "ansible-playbook /lotus/munki_playbook.yml"
+    
+    # MunkiReport server cron job
+    - name: set up munkireport playbook cron job
+      cron:
+        name: "Run munkireport playbook"
+        minute: "0" # Runs every hour
+        state: present
+        job: "ansible-playbook /lotus/munkireport_playbook.yml"

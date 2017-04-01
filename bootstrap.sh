@@ -30,6 +30,16 @@ echo
 echo "Installing Ansible"
 apt-get install -y ansible &> /dev/null && echo "Success" || exit 1
 echo
+
+echo
+IPADDR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+
+echo "[command]" >> /etc/ansible/hosts
+echo "$IPADDR" >> /etc/ansible/hosts
+
+
+
+
 echo
 
 
@@ -52,7 +62,8 @@ DO_KEY_NAME='"name":"Lotus Command Server Public Key"'
 DO_KEY_PUB='"public_key":"'$PUB_KEY'"'
 
 DO_KEY_ID=$(curl -X POST -H \
-"Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" -d \
+"Content-Type: application/json" -H \
+"Authorization: Bearer $DO_TOKEN" -d \
 "{
     $DO_KEY_NAME,
     $DO_KEY_PUB
@@ -166,3 +177,13 @@ echo
 echo "Deleting bootstrap_variables..."
 rm -f /root/bootstrap_variables
 echo
+
+
+echo "Modifying cron.d jobs"
+
+echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
+echo '@reboot root ansible-playbook /root/lotus/server_playbook.yml --connection=local >> /var/log/lotus/bootstrap_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo
+
+echo "Rebooting..."
+sleep 5 && reboot

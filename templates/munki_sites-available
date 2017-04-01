@@ -1,0 +1,19 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        
+        #listen 443 ssl default_server;
+        #listen [::]:443 default_server;
+
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+
+        server_name {{ munki_nginx_fqdn }};
+        
+        location /munki_repo/ {
+          alias /usr/local/munki_repo/;
+          autoindex off;
+          #auth_basic "Restricted";
+          #auth_basic_user_file /etc/nginx/.htpasswd;
+        }
+}

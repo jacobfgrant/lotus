@@ -58,12 +58,27 @@
     
     - name: apply nginx sites-available template
       template:
-        src: /root/lotus/templates/munki/munki_sites-available_default
-        dest: /etc/nginx/sites-available/default
+        src: /root/lotus/templates/munki_sites-available
+        dest: /etc/nginx/sites-available/munki
         owner: root
         group: root
         mode: 0644
         backup: yes
+      notify:
+        - restart nginx
+
+    - name: remove default from nginx sites-enabled
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify:
+        - restart nginx
+    
+    - name: add munki to nginx sites-enabled
+      file:
+        src: /etc/nginx/sites-available/munki
+        dest: /etc/nginx/sites-enabled/munki
+        state: link
       notify:
         - restart nginx
     

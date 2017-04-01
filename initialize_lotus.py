@@ -228,6 +228,7 @@ def main():
     bootstrap_variables.append('DO_TOKEN=' + user_input['auth_token'])
     bootstrap_variables.append('DO_DOMAIN=' + user_input['domain'])
     bootstrap_variables.append('DO_REGION=' + user_input['region'])
+    bootstrap_variables.append('DO_SIZE=' + user_input['size'])
     
     # Get command server cloud-config file
     # FIX URL

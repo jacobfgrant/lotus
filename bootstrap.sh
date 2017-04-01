@@ -44,7 +44,7 @@ echo
 # Create each variable for DigitalOcean API call
 DO_API_NAME='"name":"munkireport.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
-DO_API_SIZE='"size":"512mb"' && echo $DO_API_SIZE
+DO_API_SIZE='"size":"'$DO_SIZE'"' && echo $DO_API_SIZE
 DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
 DO_API_SSHKEYS='"ssh_keys":null' && echo $DO_API_SSHKEYS
 DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
@@ -92,7 +92,7 @@ echo
 # Create each variable for DigitalOcean API call
 DO_API_NAME='"name":"00-munki.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
-DO_API_SIZE='"size":"512mb"' && echo $DO_API_SIZE
+DO_API_SIZE='"size":"'$DO_SIZE'"' && echo $DO_API_SIZE
 DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
 DO_API_SSHKEYS='"ssh_keys":null' && echo $DO_API_SSHKEYS
 DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS

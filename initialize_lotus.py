@@ -9,8 +9,10 @@
 
 import json
 import getpass
-# Add way to pip
-import requests
+try:
+    import requests
+except:
+    pip.main(['install', '--upgrade', 'requests'])
 
 
 def make_headers(auth_token):
@@ -214,6 +216,38 @@ def get_size():
     return size
 
 
+#def get_key(auth_token):
+def get_key():
+    while True:
+        pub_key = raw_input("\nPlease copy and paste your RSA PUBLIC KEY (not your private key!) here:\n")
+        
+        # In the future, add key to DigitalOcean
+        """
+        add_key = requests.post(
+            url="https://api.digitalocean.com/v2/account/keys",
+            headers=make_headers(auth_token),
+            data='{"name":"Lotus User Key","public_key":"' + pub_key +'"}'
+            ).text
+        
+        if add_key in available_regions:
+            print "\nSuccess\n"
+            break
+        else:
+            print "Please try again.\n"
+            continue
+        """
+        print
+        
+        correct_key = raw_input("\n\nIs this key correct? (y/n):\n")
+        if correct_key in "Yesyes":
+            break
+        else:
+            continue
+        print
+    
+    return pub_key
+
+
 def main():
     
     # Get input from users
@@ -222,6 +256,7 @@ def main():
     user_input['domain'] = get_domain()
     user_input['region'] = get_region()
     user_input['size'] = get_size()
+    user_input['pub_key'] = get_key()
     
     # Create bootstrap_variables
     bootstrap_variables = []
@@ -229,6 +264,7 @@ def main():
     bootstrap_variables.append('DO_DOMAIN=' + user_input['domain'])
     bootstrap_variables.append('DO_REGION=' + user_input['region'])
     bootstrap_variables.append('DO_SIZE=' + user_input['size'])
+    bootstrap_variables.append('DO_LOTUS_USER_KEY=' + user_input['pub_key'])
     
     # Get command server cloud-config file
     # FIX URL

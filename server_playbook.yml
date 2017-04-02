@@ -9,13 +9,13 @@
   tasks:
     - name: set up user account
       user:
-        name: "{{ lotus_user_name }}"
+        name: lotus # "{{ lotus_user_name }}"
         #comment: ""
         groups: sudo
         shell: /bin/bash
         generate_ssh_key: yes
-        ssh_key_bits: 2048
-        ssh_key_file: ~/.ssh/id_rsa
+        #ssh_key_bits: 2048
+        #ssh_key_file: ~/.ssh/id_rsa
         
     - name: update/upgrade packages
       apt:
@@ -33,6 +33,7 @@
         - git
         - python
         - python-pip
+        - software-properties-common
     
     - name: install required pip packages
       pip:

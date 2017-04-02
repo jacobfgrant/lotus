@@ -36,10 +36,6 @@ IPADDR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  
 
 echo "[command]" >> /etc/ansible/hosts
 echo "$IPADDR" >> /etc/ansible/hosts
-
-
-
-
 echo
 
 
@@ -52,6 +48,7 @@ if [ ! -d /root/.ssh/ ]; then
 fi
 chmod 644 /root/.ssh/
 ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa_root
+echo $DO_LOTUS_USER_KEY >> /root/.ssh/authorized_keys
 echo
 
 echo "Add ssh key to DigitalOcean"

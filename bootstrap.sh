@@ -171,15 +171,23 @@ echo -e "\n" | tee -a /var/log/lotus/api_calls.log
 echo
 
 
-echo "Deleting bootstrap_variables..."
-rm -f /root/bootstrap_variables
-echo
-
-
 echo "Modifying cron.d jobs"
 
 echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
 echo '@reboot root ansible-playbook /root/lotus/server_playbook.yml --connection=local >> /var/log/lotus/bootstrap_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo
+
+
+# In future releases, this will be fleshed out
+echo "Creating credentials"
+echo '[digitalocean]' > /root/.lotus_credentials
+echo "auth_token = $DO_TOKEN" >> /root/.lotus_credentials
+chmod 400 /root/.lotus_credentials
+echo
+
+
+echo "Deleting bootstrap_variables..."
+rm -f /root/bootstrap_variables
 echo
 
 echo "Rebooting..."

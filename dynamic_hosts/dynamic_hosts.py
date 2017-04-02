@@ -12,17 +12,21 @@ import sys
 import json
 import ConfigParser
 import argparse
-# Need to pip install requests (somehow)
 import requests
 
+# Get credentials
+lotus_credentials_config = ConfigParser.ConfigParser()
+lotus_credentials = lotus_credentials_config.read("/root/.lotus_credentials")
+
+# Get authorization here
+# Use lotus_credentials to chose which
+api_auth_token = lotus_credentials_config.get("digitalocean","auth_token")
+
 # Import api_functions
+# Choose API to import wrappers
+# Will use input from lotus_credentials to determine which API
 sys.path.append('/root/lotus/dynamic_hosts/api_functions/')
 from digitalocean_api_functions import *
-
-# Get credentials (DO API token)
-config = ConfigParser.ConfigParser()
-digitalocean_credentials_config = config.read("/root/.lotus_credentials/digitalocean_credentials")
-digitalocean_auth_token = config.get("digitalocean","auth_token")
 
 
 
@@ -46,9 +50,9 @@ class DigitalOcean_Inventory(object):
     
     def list_inventory(self):
         # Rewrite this function
-        tag_list = get_tag_list(digitalocean_auth_token)
+        tag_list = get_tag_list(api_auth_token)
         # Needs improving; very brittle
-        tag_ip_dict = get_tag_ip_dict(digitalocean_auth_token, False)
+        tag_ip_dict = get_tag_ip_dict(api_auth_token, False)
         
         inventory = {}
         # Add error if tag_list has no elements
@@ -61,7 +65,7 @@ class DigitalOcean_Inventory(object):
     
     
     def host_inventory(self):
-        tag_list = get_tag_list(digitalocean_auth_token)
+        tag_list = get_tag_list(api_auth_token)
         # THROW ERROR INSTEAD
         tag = self.args.host
         if tag not in tag_list:
@@ -70,7 +74,7 @@ class DigitalOcean_Inventory(object):
             return {}
         
         inventory = {}
-        tag_ip_dict = get_tag_ip_dict(digitalocean_auth_token, False)
+        tag_ip_dict = get_tag_ip_dict(api_auth_token, False)
         inventory[tag] = {'hosts':tag_ip_dict[tag],'vars':{}}
         
         return inventory

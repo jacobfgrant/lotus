@@ -37,7 +37,7 @@
 
     - name: copy dynamic hosts file
       copy:
-        src: /root/lotus/dynamic_hosts/dynamic_hosts_scripts/dynamic_hosts.py
+        src: /root/lotus/dynamic_hosts/dynamic_hosts.py
         dest: /etc/ansible/dynamic_hosts.py
         owner: root
         group: root

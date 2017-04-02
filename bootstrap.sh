@@ -47,14 +47,13 @@ if [ ! -d /root/.ssh/ ]; then
   mkdir /root/.ssh/
 fi
 chmod 644 /root/.ssh/
-ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa_root
-echo $DO_LOTUS_USER_KEY >> /root/.ssh/authorized_keys
+ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa
 echo
 
 echo "Add ssh key to DigitalOcean"
 echo
 
-PUB_KEY=$(cat /root/.ssh/id_rsa_root.pub)
+PUB_KEY=$(cat /root/.ssh/id_rsa.pub)
 DO_KEY_NAME='"name":"Lotus Command Server Public Key"'
 DO_KEY_PUB='"public_key":"'$PUB_KEY'"'
 
@@ -72,6 +71,7 @@ DO_KEY_ID=$(curl -X POST -H \
 echo -e "\n" | tee -a /var/log/lotus/api_calls.log
 echo
 
+sleep 5
 
 # Create munkireport server (droplet)
 echo "Building MunkiReport server API call..."
@@ -82,7 +82,7 @@ DO_API_NAME='"name":"munkireport.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
 DO_API_SIZE='"size":"'$DO_SIZE'"' && echo $DO_API_SIZE
 DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
-DO_API_SSHKEYS='"ssh_keys":'["$DO_KEY_ID"]'' && echo $DO_API_SSHKEYS
+DO_API_SSHKEYS='"ssh_keys":["'$DO_KEY_ID'"]' && echo $DO_API_SSHKEYS
 DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
 DO_API_IPV6='"ipv6":true' && echo $DO_API_IPV6
 DO_API_PRIVATENETWORKING='"private_networking":true' && echo $DO_API_PRIVATENETWORKING
@@ -131,7 +131,7 @@ DO_API_NAME='"name":"00-munki.'$DO_DOMAIN'"' && echo $DO_API_NAME
 DO_API_REGION='"region":"'$DO_REGION'"' && echo $DO_API_REGION
 DO_API_SIZE='"size":"'$DO_SIZE'"' && echo $DO_API_SIZE
 DO_API_IMAGE='"image":"ubuntu-16-04-x64"' && echo $DO_API_IMAGE
-DO_API_SSHKEYS='"ssh_keys":'["$DO_KEY_ID"]'' && echo $DO_API_SSHKEYS
+DO_API_SSHKEYS='"ssh_keys":["'$DO_KEY_ID'"]' && echo $DO_API_SSHKEYS
 DO_API_BACKUPS='"backups":true' && echo $DO_API_BACKUPS
 DO_API_IPV6='"ipv6":true' && echo $DO_API_IPV6
 DO_API_PRIVATENETWORKING='"private_networking":true' && echo $DO_API_PRIVATENETWORKING
@@ -174,7 +174,7 @@ echo
 echo "Modifying cron.d jobs"
 
 echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
-echo '@reboot root ansible-playbook /root/lotus/server_playbook.yml --connection=local >> /var/log/lotus/initial_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo '@reboot root ansible-playbook /root/lotus/command-server.yml --connection=local >> /var/log/lotus/initial_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
 echo
 
 
@@ -191,4 +191,4 @@ rm -f /root/bootstrap_variables
 echo
 
 echo "Rebooting..."
-sleep 5 && reboot
+sleep 10 && reboot

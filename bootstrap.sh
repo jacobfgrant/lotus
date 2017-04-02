@@ -174,7 +174,7 @@ echo
 echo "Modifying cron.d jobs"
 
 echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
-echo '@reboot root ansible-playbook /root/lotus/server_playbook.yml --connection=local >> /var/log/lotus/bootstrap_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo '@reboot root ansible-playbook /root/lotus/server_playbook.yml --connection=local >> /var/log/lotus/initial_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
 echo
 
 

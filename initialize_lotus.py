@@ -326,8 +326,8 @@ def main():
     
     # Get command server cloud-config file
     # FIX URL
-    # https://raw.githubusercontent.com/jacobfgrant/lotus/master/server_cloud-config.yml
-    cloud_config_file = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/version-0.1/server_cloud-config.yml").text
+    # https://raw.githubusercontent.com/jacobfgrant/lotus/master/server.cloud-config
+    cloud_config_file = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/version-0.1/server.cloud-config").text
     
     # Add bootstrap_variables to command server cloud-config file
     bootstrap_variables_string = ''

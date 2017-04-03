@@ -28,7 +28,7 @@ def get_auth_token():
         token_verification = requests.get(url="https://api.digitalocean.com/v2/account", headers=make_headers(auth_token)).text
         
         if token_verification == '{"id":"unauthorized","message":"Unable to authenticate you."}':
-            print "Unable to authenticate. Please try again.\n"
+            print "\nError: Unable to authenticate. Please try again.\n"
             continue
         else:
             print "Authentication successful.\n"
@@ -51,21 +51,21 @@ def get_domain():
             ]
         
         if len(domain) > 48:
-            print "Domain name too long. Chose something shorter.\n"
+            print "\nError: Domain name too long. Please choose something shorter.\n"
             return False
         
         domains = domain.split('.')
         if domains[-1] not in valid_tlds:
-            print "Not a valid TLD. Please chose another.\n"
+            print "\nError: Not a valid TLD. Please choose another.\n"
             return False
         
         for d in domains[:-1]:
             if d[0] == '-':
-                print "Invalid domain name Cannot begin with a dash.\nPlease try again.\n"
+                print "\nError: Invalid domain name\nCannot begin with a dash.\nPlease try again.\n"
                 return False
             for i in d:
                 if not i.isalpha() and i is not '-':
-                    print "Invalid domain name. Alphanumeric characters and dashes only.\nPlease try again.\n"
+                    print "\n Error: Invalid domain name.\nAlphanumeric characters and dashes only.\nPlease try again.\n"
                     return False
         
         return True
@@ -82,7 +82,7 @@ def get_domain():
     # Tests whether domain has been added to DigitalOcean; otherwise fails
     # To be implemented later
     if False: #Not on DigitalOcean
-        print "Domain not on DigitalOcean."
+        print "\nError: Domain not on DigitalOcean."
         print "Please add the domain to DigitalOcean and run this script again."
         exit()
     
@@ -144,7 +144,7 @@ def get_region():
             print "\nSuccess\n"
             break
         else:
-            print "Invalid region. Please try again.\n"
+            print "\nError: Invalid region. Please try again.\n"
             continue
     
     return region
@@ -211,72 +211,100 @@ def get_size():
             print "\nSuccess\n"
             break
         else:
-            print "Invalid size. Please try again.\n"
+            print "\nError: Invalid size. Please try again.\n"
             continue
     
     return size
 
 
 #def get_key(auth_token):
-def get_key():
+def get_key(auth_token):
+    
+    def get_exisiting_key(auth_token):
+        print "\nPlease copy and paste your key's fingerprint."
+        print "(This can be found at: https://cloud.digitalocean.com/settings/security)"
+        key_fingerprint = raw_input("\nKey Fingerprint:\n")
+        
+        all_keys = requests.get(
+            url="https://api.digitalocean.com/v2/account/keys",
+            headers=make_headers(auth_token)
+            ).text
+        
+        if key_fingerprint in all_keys:
+            print "\nSuccess!\n"
+            return key_fingerprint
+        else:
+            print  "\nError: Key does not exist. Please try again.\n"
+            return None
+    
+    
+    def get_new_key(auth_token):
+        pub_key = raw_input("\nPlease copy and paste your ssh PUBLIC key\n(NOT your private key!) here:\n\n")
+        
+        key_name = raw_input("\n\nWhat would you like to call this key?\n")
+        
+        add_key = requests.post(
+            url="https://api.digitalocean.com/v2/account/keys",
+            headers=make_headers(auth_token),
+            data='{"name":"' + key_name + '","public_key":"' + pub_key + '"}'
+            ).text
+        
+        if 'Key invalid' in add_key:
+            print "\nError: Invalid key type. Please try again.\n"
+            return None
+        
+        if 'SSH Key is already in use on your account' in add_key:
+            print "\nError: Key already exists."
+            print "Please either add this key's fingerprint or add a different key.\n"
+            return None
+        
+        key_fingerprint_re = re.search('"fingerprint":"([0-9a-f:]*)"', add_key)
+        key_fingerprint = key_fingerprint_re.groups(1)[0]
+        
+        if key_fingerprint_re is None:
+            print  "\nError: Please try again.\n"
+            return None
+        
+        else:
+            print  "\nSuccess!\n"
+            return key_fingerprint
+    
+    
+    key_fingerprint_list = []
     while True:
-        print "\nYou need a ssh key to access Lotus. Would you like to:\n"
-        key_choice = raw_input("1  :  Add a new public key to DigitalOcean\n2  :  Use an existing DigitalOcean key")
+        print "\nWould you like to:\n"
+        print "1  :  Use an existing DigitalOcean key"
+        print "2  :  Add a new public key to DigitalOcean"
+        if len(key_fingerprint_list) > 0:
+            print "3  :  Finish adding keys"
+        print
+        key_choice = raw_input()
+        
         
         if key_choice == '1':
-            
-            pub_key = raw_input("\nPlease copy and paste your ssh PUBLIC key (NOT your private key!) here:\n\n")
-            
-            add_key = requests.post(
-                url="https://api.digitalocean.com/v2/account/keys",
-                headers=make_headers(auth_token),
-                data='{"name":"Lotus User Key","public_key":"' + pub_key + '"}'
-                ).text
-            
-            if add_key = u'{"id":"unprocessable_entity","message":"Key invalid type, we support \'ssh-rsa\', \'ssh-dss\', \'ecdsa-sha2-nistp256\', \'ecdsa-sha2-nistp384\', \'ecdsa-sha2-nistp521\', or \'ssh-ed25519\'"}':
-                print "\nError: Invalid key. Please try again.\n"
+            key_fingerprint = get_exisiting_key(auth_token)
+            if key_fingerprint is None:
                 continue
-            
-            if add_key = u'{"id":"unprocessable_entity","message":"SSH Key is already in use on your account"}':
-                print "\nError: Key already in DigitalOcean.\n"
-                continue
-            
-            
-            '"fingerprint":"([0-9a-f:]*)"'
-            key_fingerprint = re.search('"fingerprint":"([0-9a-f:]*)"', add_key)
-            key_fingerprint = key_fingerprint_re.groups(1)[0]
-            
-            if key_fingerprint_re is None:
-                print  "\nError: Please try again.\n"
-                continue
-            
             else:
-                print  "\nSuccess!\n"
-                break
-            
-        if key_choice == '2':
-            
-            print "\nPlease copy and paste your key's fingerprint."
-            print "\n(This can be found at: https://cloud.digitalocean.com/settings/security)\n"
-            key_fingerprint = raw_input("\nFingerprint:\n")
-            
-            all_keys = requests.get(
-                url="https://api.digitalocean.com/v2/account/keys",
-                headers=make_headers(auth_token)
-                ).text
-            
-            if key_fingerprint in all_keys:
-                print "\nSuccess!\n"
-                break
-            else:
-                print  "\nError: Please try again.\n"
+                key_fingerprint_list.append(key_fingerprint)
                 continue
-            
-        else:
-            print "Error: Not a valid answer.\n"
-            continue
         
-        return key_fingerprint
+        if key_choice == '2':
+            key_fingerprint = get_new_key(auth_token)
+            if key_fingerprint is None:
+                continue
+            else:
+                key_fingerprint_list.append(key_fingerprint)
+                continue
+        
+        if key_choice == '3' and len(key_fingerprint_list) > 0:
+            break
+        
+        else:
+            print "\nError: Not a valid option.\n\n"
+            continue
+    
+    return key_fingerprint_list
 
 
 def main():
@@ -287,7 +315,7 @@ def main():
     user_input['domain'] = get_domain()
     user_input['region'] = get_region()
     user_input['size'] = get_size()
-    user_input['key_fingerprint'] = get_key()
+    user_input['key_fingerprint_list'] = get_key(user_input['auth_token'])
     
     # Create bootstrap_variables
     bootstrap_variables = []
@@ -333,7 +361,7 @@ def main():
     api_data['name'] = user_input['domain']
     api_data['region'] = user_input['region']
     api_data['size'] = user_input['size']
-    api_data['ssh_keys'] = [user_input['key_fingerprint']]
+    api_data['ssh_keys'] = user_input['key_fingerprint_list']
     api_data['user_data'] = digitalocean_user_data
     
     initialize_lotus_request = requests.post(
@@ -342,6 +370,10 @@ def main():
         data=json.dumps(api_data)
         ).text
     
+    print "\nRequest:\n"
+    print json.dumps(api_data)
+    
+    print "\n\nReply:\n"
     print initialize_lotus_request
     print
 

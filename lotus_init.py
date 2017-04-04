@@ -336,7 +336,7 @@ def main():
         bootstrap_variables_string = bootstrap_variables_string + bv + '\n      '
     
     digitalocean_user_data = digitalocean_user_data.replace('insert_bootstrap_variables', bootstrap_variables_string)
-    digitalocean_user_data = digitalocean_user_data.replace('lotus_release_version', lotus_version)
+    digitalocean_user_data = digitalocean_user_data.replace('insert_lotus_release_version', lotus_version)
     
     #api_url = "https://api.digitalocean.com/v2/droplets"
     #api_headers = make_headers(auth_token)

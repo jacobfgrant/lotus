@@ -44,7 +44,7 @@ wget https://github.com/jacobfgrant/lotus/archive/v$LOTUS_VERSION.zip
 unzip /root/v$LOTUS_VERSION.zip
 #mv lotus-$LOTUS_VERSION /root/lotus
 rm /root/v$LOTUS_VERSION.zip
-cp /root/lotus-v$LOTUS_VERSION/ansible/* /etc/ansible/
+cp /root/lotus-$LOTUS_VERSION/ansible/* /etc/ansible/
 #chmod 0744 /root/lotus/ansible/*yml
 echo
 

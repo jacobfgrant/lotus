@@ -22,6 +22,6 @@ write_files:
 
 runcmd:
   - mkdir /var/log/lotus
-  - wget -O /root/bootstrap.sh https://github.com/jacobfgrant/lotus/releases/download/lotus_release_version/bootstrap.sh
+  - wget -O /root/bootstraph.sh https://github.com/jacobfgrant/lotus/releases/download/vinsert_lotus_release_version/bootstrap.sh
   - chmod 0744 /root/bootstrap.sh
   - /root/bootstrap.sh >> /var/log/lotus/bootstrap.log 2>&1

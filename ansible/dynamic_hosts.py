@@ -25,7 +25,7 @@ api_auth_token = lotus_credentials_config.get("digitalocean","auth_token")
 # Import api_functions
 # Choose API to import wrappers
 # Will use input from lotus_credentials to determine which API
-sys.path.append('/root/lotus/dynamic_hosts/api_functions/')
+sys.path.append('/etc/ansible/api_functions/')
 from digitalocean_api_functions import *
 
 

@@ -1,3 +1,3 @@
 # Munki vars
 ---
-munki_nginx_fqdn: "{{ ansible_hostname }} {{ ansible_default_ipv4.address }}"
+munki_nginx_fqdn: "{{ ansible_fqdn }} {{ ansible_default_ipv4.address }}"

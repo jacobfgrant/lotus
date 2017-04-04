@@ -39,11 +39,6 @@ echo "$IPADDR" >> /etc/ansible/hosts
 echo
 
 
-echo "Copying ansible files from Lotus"
-echo cp -r /root/lotus/ansible/* /etc/ansible/
-echo
-
-
 # Create ssh keys for use with Ansible
 # REPLACE WITH ANSIBLE IN FUTURE RELEASES
 echo "Creating ssh keys"
@@ -53,7 +48,9 @@ if [ ! -d /root/.ssh/ ]; then
 fi
 chmod 644 /root/.ssh/
 ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 echo
+
 
 echo "Add ssh key to DigitalOcean"
 echo
@@ -179,7 +176,8 @@ echo
 echo "Modifying cron.d jobs"
 
 echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
-echo '@reboot root ansible-playbook /etc/ansible/command.yml --connection=local >> /var/log/lotus/initial_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo '@reboot root ansible-playbook /root/lotus/ansible/command.yml --connection=local >> /var/log/lotus/command.log 2>&1' >> /etc/cron.d/cron_bootstrap
+chmod 744 /root/lotus/ansible/*.yml
 echo
 
 

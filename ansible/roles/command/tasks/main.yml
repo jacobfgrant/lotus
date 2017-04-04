@@ -34,7 +34,7 @@
     dest: /etc/ansible/
     owner: root
     group: root
-    mode: 0755
+    mode: 0744
     backup: yes
 
 - name: remove bootstrap cron.d job
@@ -47,7 +47,7 @@
     name: "Run command playbook"
     minute: "*/5"
     state: present
-    job: "ansible-playbook /etc/ansible/command.yml --connection=local"
+    job: "ansible-playbook /etc/ansible/command.yml >> /var/log/lotus/command.log 2>&1"
 
 # Munki server cron job
 - name: set up munki playbook cron job
@@ -55,7 +55,7 @@
     name: "Run munki playbook"
     minute: "*/10"
     state: present
-    job: "ansible-playbook /etc/ansible/munki.yml"
+    job: "ansible-playbook /etc/ansible/munki.yml >> /var/log/lotus/munki.log 2>&1"
 
 # MunkiReport server cron job
 - name: set up munkireport playbook cron job
@@ -63,4 +63,4 @@
     name: "Run munkireport playbook"
     minute: "*/10"
     state: present
-    job: "ansible-playbook /etc/ansible/munkireport.yml"
+    job: "ansible-playbook /etc/ansible/munkireport.yml >> /var/log/lotus/munkireport.log 2>&1"

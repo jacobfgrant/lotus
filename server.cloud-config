@@ -22,9 +22,10 @@ write_files:
 
 runcmd:
   #- wget -O /root/lotus.zip https://github.com/jacobfgrant/lotus/archive/master.zip
-  - wget -O /root/lotus.zip https://github.com/jacobfgrant/lotus/archive/version-0.1.zip
+  - wget -O /root/lotus.zip https://github.com/jacobfgrant/lotus/archive/roles.zip
   - unzip /root/lotus.zip -d /root/
   - mv /root/lotus-* /root/lotus
   - chmod 0744 /root/lotus/bootstrap.sh
+  - chmod 0744 /root/lotus/ansible/*yml.sh
   - mkdir /var/log/lotus
   - /root/lotus/bootstrap.sh >> /var/log/lotus/bootstrap.log 2>&1

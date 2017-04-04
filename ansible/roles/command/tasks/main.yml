@@ -28,6 +28,12 @@
       - requests
     state: latest
 
+- name: download Lotus repo
+  unarchive:
+    src: https://example.com/{{ lotus_version }}.zip
+    dest: /root/lotus
+    remote_src: True
+
 - name: copy Ansible files
   copy:
     src: /root/lotus/ansible/

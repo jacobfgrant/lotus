@@ -325,16 +325,15 @@ def main():
     bootstrap_variables.append('DO_SIZE=' + user_input['size'])
     
     # Get command server cloud-config file
-    # FIX URL
-    # https://raw.githubusercontent.com/jacobfgrant/lotus/master/server.cloud-config
-    cloud_config_file = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/version-0.1/server.cloud-config").text
+    digitalocean_user_data = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/" + lotus_version + "/server.cloud-config").text
     
-    # Add bootstrap_variables to command server cloud-config file
+    # Add bootstrap variables to command server cloud-config file
     bootstrap_variables_string = ''
     for bv in bootstrap_variables:
         bootstrap_variables_string = bootstrap_variables_string + bv + '\n      '
     
     digitalocean_user_data = cloud_config_file.replace('insert_bootstrap_variables', bootstrap_variables_string)
+    digitalocean_user_data = digitalocean_user_data.replace('lotus_release_version', lotus_version)
     
     #api_url = "https://api.digitalocean.com/v2/droplets"
     #api_headers = make_headers(auth_token)
@@ -379,4 +378,5 @@ def main():
 
 
 if __name__ == "__main__":
+    lotus_version = 'v0.1.0'
     main()

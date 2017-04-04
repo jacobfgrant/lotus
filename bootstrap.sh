@@ -39,6 +39,15 @@ echo "$IPADDR" >> /etc/ansible/hosts
 echo
 
 
+echo "Downloading Lotus"
+wget https://github.com/jacobfgrant/lotus/archive/$LOTUS_VERSION.zip
+unzip ./*.zip
+mv lotus-* /root/lotus
+rm ./*.zip
+chmod 0744 /root/lotus/ansible/*yml.sh
+echo
+
+
 # Create ssh keys for use with Ansible
 # REPLACE WITH ANSIBLE IN FUTURE RELEASES
 echo "Creating ssh keys"

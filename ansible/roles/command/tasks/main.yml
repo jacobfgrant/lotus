@@ -28,18 +28,10 @@
       - requests
     state: latest
 
-- name: copy dynamic hosts file
+- name: copy Ansible files
   copy:
-    src: /root/lotus/dynamic_hosts/dynamic_hosts.py
-    dest: /etc/ansible/dynamic_hosts.py
-    owner: root
-    group: root
-    mode: 0755
-
-- name: copy Ansible config file
-  copy:
-    src: /root/lotus/ansible.cfg
-    dest: /etc/ansible/ansible.cfg
+    src: /root/lotus/ansible/
+    dest: /etc/ansible/
     owner: root
     group: root
     mode: 0755
@@ -55,7 +47,7 @@
     name: "Run command playbook"
     minute: "*/5"
     state: present
-    job: "ansible-playbook /lotus/command-server.yml"
+    job: "ansible-playbook /etc/ansible/command.yml --connection=local"
 
 # Munki server cron job
 - name: set up munki playbook cron job
@@ -63,7 +55,7 @@
     name: "Run munki playbook"
     minute: "*/10"
     state: present
-    job: "ansible-playbook /lotus/munki.yml"
+    job: "ansible-playbook /etc/ansible/munki.yml"
 
 # MunkiReport server cron job
 - name: set up munkireport playbook cron job
@@ -71,4 +63,4 @@
     name: "Run munkireport playbook"
     minute: "*/10"
     state: present
-    job: "ansible-playbook /lotus/munkireport.yml"
+    job: "ansible-playbook /etc/ansible/munkireport.yml"

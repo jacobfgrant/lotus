@@ -31,11 +31,16 @@ echo "Installing Ansible"
 apt-get install -y ansible &> /dev/null && echo "Success" || exit 1
 echo
 
-echo
+echo "Creating temporary host file"
 IPADDR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
 echo "[command]" >> /etc/ansible/hosts
 echo "$IPADDR" >> /etc/ansible/hosts
+echo
+
+
+echo "Copying ansible files from Lotus"
+echo cp -r /root/lotus/ansible/* /etc/ansible/
 echo
 
 
@@ -174,7 +179,7 @@ echo
 echo "Modifying cron.d jobs"
 
 echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
-echo '@reboot root ansible-playbook /root/lotus/command.yml --connection=local >> /var/log/lotus/initial_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo '@reboot root ansible-playbook /etc/ansible/command.yml --connection=local >> /var/log/lotus/initial_playbook.log 2>&1' >> /etc/cron.d/cron_bootstrap
 echo
 
 

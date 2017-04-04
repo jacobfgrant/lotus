@@ -1,0 +1,15 @@
+---
+- name: update/upgrade packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: install required packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - aptitude
+    - curl
+    - git
+    - python

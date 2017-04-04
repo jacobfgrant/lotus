@@ -1,0 +1,76 @@
+# Munki tasks
+---
+- name: create munki group
+  group:
+    name: munki
+    system: yes
+
+- name: create munki user
+  user:
+    name: munki
+    comment: "Munki User"
+    group: munki
+    shell: /bin/bash
+    system: yes
+
+- name: add web user (www-data) to munki group
+  user:
+    name: www-data
+    group: munki
+
+- name: create munki repo
+  file:
+    path: "/usr/local/munki_repo/{{ item }}"
+    state: directory
+    owner: root
+    group: munki
+    mode: 02744
+    recurse: yes
+  with_items:
+    -
+    - catalogs
+    - client_resources
+    - icons
+    - manifests
+    - pkgs
+    - pkgsinfo
+
+- name: install required packages - munki
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - apache2-utils
+    - build-essential
+    - nginx
+
+- name: apply nginx sites-available template
+  template:
+    src: sites-available.munki.j2
+    dest: /etc/nginx/sites-available/munki
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify:
+    - restart nginx
+
+- name: remove default from nginx sites-enabled
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify:
+    - restart nginx
+
+- name: add munki to nginx sites-enabled
+  file:
+    src: /etc/nginx/sites-available/munki
+    dest: /etc/nginx/sites-enabled/munki
+    state: link
+  notify:
+    - restart nginx
+
+- name: ensure nginx is running
+  service:
+    name: nginx
+    state: started

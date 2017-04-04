@@ -328,7 +328,7 @@ def main():
     # Get command server cloud-config file
     #digitalocean_user_data = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/" + lotus_version + "/server.cloud-config").text
     
-    digitalocean_user_data = requests.get("https://github.com/jacobfgrant/lotus/releases/download/" + lotus_version + "/command-server.cloud-config.yml").text
+    digitalocean_user_data = requests.get("https://github.com/jacobfgrant/lotus/releases/download/v" + lotus_version + "/command-server.cloud-config.yml").text
     
     # Add bootstrap variables to command server cloud-config file
     bootstrap_variables_string = ''
@@ -381,5 +381,5 @@ def main():
 
 
 if __name__ == "__main__":
-    lotus_version = 'v0.1.0'
+    lotus_version = '0.1.0'
     main()

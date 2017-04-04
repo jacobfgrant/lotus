@@ -223,7 +223,7 @@ def get_key(auth_token):
     def get_exisiting_key(auth_token):
         print "\nPlease copy and paste your key's fingerprint."
         print "(This can be found at: https://cloud.digitalocean.com/settings/security)"
-        key_fingerprint = raw_input("\nKey Fingerprint:\n")
+        key_fingerprint = raw_input("\nKey Fingerprint:\n\n")
         
         all_keys = requests.get(
             url="https://api.digitalocean.com/v2/account/keys",
@@ -327,7 +327,7 @@ def main():
     # Get command server cloud-config file
     # FIX URL
     # https://raw.githubusercontent.com/jacobfgrant/lotus/master/server.cloud-config
-    cloud_config_file = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/roles/server.cloud-config").text
+    cloud_config_file = requests.get("https://raw.githubusercontent.com/jacobfgrant/lotus/version-0.1/server.cloud-config").text
     
     # Add bootstrap_variables to command server cloud-config file
     bootstrap_variables_string = ''

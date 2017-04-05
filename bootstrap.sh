@@ -40,12 +40,12 @@ echo
 
 
 echo "Downloading Lotus"
-wget https://github.com/jacobfgrant/lotus/archive/v$LOTUS_VERSION.zip
-unzip /root/v$LOTUS_VERSION.zip
+wget -O /root/v$LOTUS_VERSION.zip https://github.com/jacobfgrant/lotus/archive/v$LOTUS_VERSION.zip
+unzip /root/v$LOTUS_VERSION.zip -d /root/
 #mv lotus-$LOTUS_VERSION /root/lotus
 rm /root/v$LOTUS_VERSION.zip
-cp /root/lotus-$LOTUS_VERSION/ansible/* /etc/ansible/
-#chmod 0744 /root/lotus/ansible/*yml
+cp -r /root/lotus-$LOTUS_VERSION/ansible/* /etc/ansible/
+chmod 0744 /etc/ansible/*.py /etc/ansible/*.yml
 echo
 
 
@@ -186,7 +186,7 @@ echo
 echo "Modifying cron.d jobs"
 
 echo 'PATH=/usr/bin:/bin:/usr/sbin:/sbin' > /etc/cron.d/cron_bootstrap
-echo '@reboot root ansible-playbook /root/lotus/ansible/command.yml --connection=local >> /var/log/lotus/command.log 2>&1' >> /etc/cron.d/cron_bootstrap
+echo '@reboot root ansible-playbook /etc/ansible/command.yml --connection=local >> /var/log/lotus/command.log 2>&1' >> /etc/cron.d/cron_bootstrap
 chmod 744 /root/lotus/ansible/*.yml
 echo
 

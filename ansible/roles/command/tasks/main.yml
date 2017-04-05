@@ -30,13 +30,13 @@
 
 - name: download Lotus repo
   unarchive:
-    src: "https://github.com/jacobfgrant/lotus/archive/{{ lotus_version }}.zip"
-    dest: /root/lotus
+    src: "https://github.com/jacobfgrant/lotus/archive/v{{ lotus_version }}.zip"
+    dest: "/root/lotus{{ lotus_version }}"
     remote_src: True
 
 - name: copy Ansible files
   copy:
-    src: /root/lotus/ansible/
+    src: "/root/lotus{{ lotus_version }}/ansible/"
     dest: /etc/ansible/
     owner: root
     group: root

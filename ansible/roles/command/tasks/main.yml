@@ -28,15 +28,15 @@
       - requests
     state: latest
 
-- name: download Lotus repo
+- name: download/unzip Lotus repo
   unarchive:
     src: "https://github.com/jacobfgrant/lotus/archive/v{{ lotus_version }}.zip"
-    dest: "/root/lotus{{ lotus_version }}"
+    dest: "/root/lotus-{{ lotus_version }}"
     remote_src: True
 
 - name: copy Ansible files
   copy:
-    src: "/root/lotus{{ lotus_version }}/ansible/"
+    src: "/root/lotus-{{ lotus_version }}/ansible/"
     dest: /etc/ansible/
     owner: root
     group: root

@@ -12,7 +12,11 @@ import sys
 import json
 import ConfigParser
 import argparse
-import requests
+import pip
+try:
+    import requests
+except:
+    pip.main(['install', '--upgrade', 'requests'])
 
 # Get credentials
 lotus_credentials_config = ConfigParser.ConfigParser()
